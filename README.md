@@ -17,7 +17,7 @@ For a lost good talks to ever ti
 
 ## Training
 
-To start training the CL+VL+TH model, first download the dataset, available at <http://www.statmt.org/lm-benchmark/>, and extract it in the `data` directory.
+To start training the CL+VL+TH model, first download the dataset, available at <http://www.statmt.org/lm-benchmark/>, and extract it into the `./data` directory.
 
 Then use the following command:
 
@@ -60,7 +60,7 @@ LIMIT_BATCH: Boolean that indicates whether to limit the batch size  (defaults t
 
 ```
 
-Paramters can be used in the following way:
+Paramters can be set by either changing their value in the config file or by passing them in the terminal:
 
 ```
 python curriculum_training.py --START_SEQ=1 --END_SEQ=32
@@ -68,8 +68,7 @@ python curriculum_training.py --START_SEQ=1 --END_SEQ=32
 
 ## Generating text
 
-The `generate.py` script will generate `BATCH_SIZE` samples using a saved model. It should be run in the following way,
-using the parameters used to train it (if they are different than the default values):
+The `generate.py` script will generate `BATCH_SIZE` samples using a saved model. It should be run using the parameters used to train the model (if they are different than the default values). For example:
 
 ``` 
 python generate.py --CKPT_PATH=/path/to/checkpoint --DISC_GRU_LAYERS=2 --GEN_GRU_LAYERS=2
