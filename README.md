@@ -1,9 +1,8 @@
 # Language Generation with Recurrent Generative Adversarial Networks without Pre-training
 
-## About this work
+Code for training and evaluation of the model from ["Language Generation with Recurrent Generative Adversarial Networks without Pre-training"](https://arxiv.org/abs/1706.01399).  
 
-Generative Adversarial Networks (GANs) have shown great promise recently in image generation. Training GANs for text generation has proven to be more difficult, because of the non-differentiable nature of generating text with recurrent neural networks. Consequently, past work has either resorted to pre-training with maximum-likelihood or used convolutional networks for generation.
-In this work, we show that recurrent neural networks can be trained to generate text with GANs from scratch by employing curriculum learning, slowly increasing the length of the generated text, and by training the RNN simultaneously to generate sequences of different lengths. We show that this approach vastly improves the quality of generated sequences compared to the convolutional baseline.
+
  
 ### Sample outputs (32 chars)
 
