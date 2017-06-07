@@ -88,25 +88,7 @@ def get_gt_grams_cached(lines, dataset='training'):
         return grams
 
 
-def evaluate_js(lines_samples, true_char_ngram_lms):
-    output = []
-    for i in range(4):
-        lm = language_helpers.NgramLanguageModel(i + 1, lines_samples)
-        output.append(("JS %d:" % (i + 1), lm.js_with(true_char_ngram_lms[i])))
-    return output
-
-
-def get_true_char_ngram_lms(lines, tokenize):
-    true_char_filename = FLAGS.PICKLE_PATH + '/true-char-ngrams-%s.pkl' % tokenize
-    if os.path.exists(true_char_filename):
-        true_char_ngram_lms = model_and_data_serialization.load_picklized(true_char_filename)
-    else:
-        true_char_ngram_lms = build_vailidation_ngram_models(lines)
-        model_and_data_serialization.save_picklized(true_char_ngram_lms, true_char_filename)
-    return true_char_ngram_lms
-
-
 dataset = 'heldout'
-lines = load_gt(False, dataset)
+lines = load_gt(tokenize=False, dataset=dataset)
 gt_grams = get_gt_grams_cached(lines, dataset)
 evaluate(FLAGS.INPUT_SAMPLE, gt_grams)

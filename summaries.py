@@ -51,30 +51,15 @@ def get_grams_cached(lines):
 def get_grams(lines):
     lines_joined = [''.join(l) for l in lines]
 
-    # print "Lines Samples:"
-    # print lines_joined[5:10]
-
     unigrams = dict()
     bigrams = dict()
     trigrams = dict()
-    end_words = dict()
+    quadgrams = dict()
     token_count = 0
 
     for l in lines_joined:
-        if len(l) == 0:
-            continue
-
-        if l[-1] == ' ':
-            l = l[:-1].split(" ")
-            # print l
-        else:
-            index = l.rfind(' ')
-            end_word = l[index + 1:]
-            end_words[end_word] = end_words.get(end_word, 0) + 1
-
-            l = l[:index]
-            l = l.split(" ")
-        # print l, end_word
+        l = l.split(" ")
+        l = filter(lambda x: x != ' ' and x != '', l)
 
         for i in range(len(l)):
             token_count += 1
@@ -83,8 +68,10 @@ def get_grams(lines):
                 bigrams[(l[i - 1], l[i])] = bigrams.get((l[i - 1], l[i]), 0) + 1
             if i >= 2:
                 trigrams[(l[i - 2], l[i - 1], l[i])] = trigrams.get((l[i - 2], l[i - 1], l[i]), 0) + 1
+            if i >= 3:
+                quadgrams[(l[i - 3], l[i - 2], l[i - 1], l[i])] = quadgrams.get((l[i - 3], l[i - 2], l[i - 1], l[i]), 0) + 1
 
-    return unigrams, bigrams, trigrams, end_words
+    return unigrams, bigrams, trigrams, quadgrams
 
 
 def percentage_real(samples_grams, real_grams):
