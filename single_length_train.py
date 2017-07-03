@@ -27,9 +27,10 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
     real_inputs_discrete = tf.placeholder(tf.int32, shape=[BATCH_SIZE, seq_length])
 
     global_step = tf.Variable(0, trainable=False)
-    disc_cost, gen_cost, fake_inputs, disc_fake, disc_real, disc_on_inference, inference_op = define_objective(charmap,
-                                                                                                            real_inputs_discrete,
-                                                                                                            seq_length)
+    disc_cost, gen_cost, fake_inputs, disc_fake, disc_real, disc_on_inference, inference_op, other_ops = define_objective(charmap,real_inputs_discrete, seq_length,
+        gan_type=FLAGS.GAN_TYPE)
+
+
     merged, train_writer = define_summaries(disc_cost, gen_cost, seq_length)
     disc_train_op, gen_train_op = get_optimization_ops(disc_cost, gen_cost, global_step)
 
@@ -55,10 +56,21 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
             # Train critic
             for i in range(CRITIC_ITERS):
                 _data = next(gen)
-                _disc_cost, _, real_scores = session.run(
+
+                if FLAGS.GAN_TYPE == "fgan":
+                    _disc_cost, _, real_scores, _ = session.run(
+                    [disc_cost, disc_train_op, disc_real,
+                        other_ops["alpha_optimizer_op"]],
+                    feed_dict={real_inputs_discrete: _data}
+                    )
+
+                else:
+                    _disc_cost, _, real_scores = session.run(
                     [disc_cost, disc_train_op, disc_real],
                     feed_dict={real_inputs_discrete: _data}
-                )
+                    )
+
+
 
             # Train G
             for i in range(GEN_ITERS):

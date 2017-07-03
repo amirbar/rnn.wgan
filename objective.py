@@ -35,6 +35,7 @@ def get_substrings_from_gt(real_inputs, seq_length, charmap_len):
 
 def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan"):
     assert gan_type in ["wgan", "fgan", "cgan"]
+    other_ops = {}
     real_inputs = tf.one_hot(real_inputs_discrete, len(charmap))
     Generator = get_generator(FLAGS.GENERATOR_MODEL)
     Discriminator = get_discriminator(FLAGS.DISCRIMINATOR_MODEL)
@@ -52,10 +53,11 @@ def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan")
     elif gan_type == "fgan":
         fgan = FisherGAN()
         disc_cost, gen_cost = fgan.loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
+        other_ops["alpha_optimizer_op"] = fgan.alpha_optimizer_op
     else:
         raise NotImplementedError("Cramer GAN not implemented")
 
-    return disc_cost, gen_cost, train_pred, disc_fake, disc_real, disc_on_inference, inference_op
+    return disc_cost, gen_cost, train_pred, disc_fake, disc_real, disc_on_inference, inference_op, other_ops
 
 
 def loss_d_g(disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length, Discriminator):

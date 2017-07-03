@@ -10,8 +10,21 @@ class FisherGAN():
     """
 
     def __init__(self, rho=1e-5):
+        tf.logging.warn("USING FISHER GAN OBJECTIVE FUNCTION")
         self._rho = rho
-        self._alpha = tf.get_variable("fisher_alpha", [0], initializer=tf.zeros_initializer)
+        # Initialize alpha (or in paper lambda) with zero
+        self._alpha = tf.get_variable("fisher_alpha", [], initializer=tf.zeros_initializer)
+
+    def _optimize_alpha(self, disc_cost):
+        """ In the optimization of alpha, we optimize via regular sgd with a learning rate
+        of rho.
+        This should occur every time the discriminator is optimized. 
+        """
+
+        # first find alpha gradient
+        self._alpha_optimizer = tf.train.GradientDescentOptimizer(self._rho)
+        self.alpha_optimizer_op = self._alpha_optimizer.minimize(disc_cost, var_list=[self._alpha])
+        return
 
     def loss_d_g(self, disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length, Discriminator):
         
@@ -36,5 +49,7 @@ class FisherGAN():
         # cost function by minus one.
         disc_cost = -1.0 * (E_P_f - E_Q_f + self._alpha * constraint - self._rho/2 * constraint**2)
 
+        # calculate optimization op for alpha
+        self._optimize_alpha(disc_cost)
 
         return disc_cost, gen_cost
