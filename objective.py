@@ -1,7 +1,7 @@
 import tensorflow as tf
 from config import FLAGS, BATCH_SIZE, LAMBDA
 from model import get_generator, get_discriminator, params_with_name
-
+from fisher_gan_objective import FisherGAN
 
 def get_optimization_ops(disc_cost, gen_cost, global_step):
     gen_params = params_with_name('Generator')
@@ -9,10 +9,10 @@ def get_optimization_ops(disc_cost, gen_cost, global_step):
     print("Generator Params: %s" % gen_params)
     print("Disc Params: %s" % disc_params)
     gen_train_op = tf.train.AdamOptimizer(learning_rate=1e-4, beta1=0.5, beta2=0.9).minimize(gen_cost,
-                                                                                             var_list=gen_params,
-                                                                                             global_step=global_step)
+        var_list=gen_params,
+        global_step=global_step)
     disc_train_op = tf.train.AdamOptimizer(learning_rate=1e-4, beta1=0.5, beta2=0.9).minimize(disc_cost,
-                                                                                              var_list=disc_params)
+        var_list=disc_params)
     return disc_train_op, gen_train_op
 
 
@@ -33,7 +33,8 @@ def get_substrings_from_gt(real_inputs, seq_length, charmap_len):
         return all_sub_strings
 
 
-def define_objective(charmap, real_inputs_discrete, seq_length):
+def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan"):
+    assert gan_type in ["wgan", "fgan", "cgan"]
     real_inputs = tf.one_hot(real_inputs_discrete, len(charmap))
     Generator = get_generator(FLAGS.GENERATOR_MODEL)
     Discriminator = get_discriminator(FLAGS.DISCRIMINATOR_MODEL)
@@ -45,7 +46,15 @@ def define_objective(charmap, real_inputs_discrete, seq_length):
     disc_fake = Discriminator(train_pred, len(charmap), seq_length, reuse=True)
     disc_on_inference = Discriminator(inference_op, len(charmap), seq_length, reuse=True)
 
-    disc_cost, gen_cost = loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
+
+    if gan_type == "wgan":
+        disc_cost, gen_cost = loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
+    elif gan_type == "fgan":
+        fgan = FisherGAN()
+        disc_cost, gen_cost = fgan.loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
+    else:
+        raise NotImplementedError("Cramer GAN not implemented")
+
     return disc_cost, gen_cost, train_pred, disc_fake, disc_real, disc_on_inference, inference_op
 
 
