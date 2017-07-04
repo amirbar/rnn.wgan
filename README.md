@@ -79,12 +79,9 @@ python curriculum_training.py --START_SEQ=1 --END_SEQ=32
 In the wasserstein GAN, please monitor the disc_cost. It should be a negative number and approach zero. The disc_cost represents the negative wasserstein distance between gen and critic.
 
 ### Fisher GAN
-To measure convergence, gen_cost should start at zero and decrease to a negative number. The lower, the better.
+To measure convergence, gen_cost should start at a positive number and decrease. The lower, the better.
 
 Warning: in the very beginning of training, you may see the gen_cost rise. Please wait at least 5000 iterations and the gen_cost should start to lower. This phenomena is due to the critic finding the appropriate wasserstein distance and then the generator adjusting for it.
-
-It is recommended that you use a critic iteration of 1 when using fisher gan.
-
 
 ## Generating text
 

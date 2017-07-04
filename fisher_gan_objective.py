@@ -9,8 +9,8 @@ class FisherGAN():
     Tried to keep variable names the same as much as possible
 
 
-    To measure convergence, gen_cost should start at zero and decrease
-    to a negative number. The lower, the better.
+    To measure convergence, gen_cost should start at a positive number and decrease
+    to to zero. The lower, the better.
 
     Warning: in the very beginning of training, you may see the gen_cost rise. Please
     wait at least 5000 iterations and the gen_cost should start to lower. This 

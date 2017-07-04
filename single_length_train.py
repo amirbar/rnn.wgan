@@ -73,7 +73,7 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
                     [disc_cost, disc_train_op, disc_real],
                     feed_dict={real_inputs_discrete: _data}
                     )
-                    
+
                 else:
                     raise ValueError(
                         "Appropriate gan type not selected: {}".format(FLAGS.GAN_TYPE))
@@ -85,8 +85,8 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
             for i in range(GEN_ITERS):
                 _data = next(gen)
                 # in Fisher GAN, paper measures convergence by gen_cost instead of disc_cost
-                # To measure convergence, gen_cost should start at zero and decrease
-                # to a negative number. The lower, the better.
+                # To measure convergence, gen_cost should start at a positive number and decrease
+                # to zero. The lower, the better.
                 _gen_cost, _ = session.run([gen_cost, gen_train_op], feed_dict={real_inputs_discrete: _data})
                 _gen_cost_list.append(_gen_cost)
 
