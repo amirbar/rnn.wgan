@@ -27,7 +27,8 @@ python curriculum_training.py
 To train with fgan:
 
 ```
-python curriculum_training.py --GAN_TYPE wgan --CRITIC_ITERS 2 --GEN_ITERS 4
+python curriculum_training.py --GAN_TYPE wgan \
+--CRITIC_ITERS 2 --GEN_ITERS 4 --ITERATIONS_PER_SEQ_LENGTH 60000
 ```
 
 

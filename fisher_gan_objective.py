@@ -8,9 +8,8 @@ class FisherGAN():
     Modeled off https://github.com/ethancaballero/FisherGAN/blob/master/main.py
     Tried to keep variable names the same as much as possible
 
-
     To measure convergence, gen_cost should start at a positive number and decrease
-    to to zero. The lower, the better.
+    to zero. The lower, the better.
 
     Warning: in the very beginning of training, you may see the gen_cost rise. Please
     wait at least 5000 iterations and the gen_cost should start to lower. This 
@@ -25,6 +24,8 @@ class FisherGAN():
         self._rho = rho
         # Initialize alpha (or in paper called lambda) with zero
         # Throughout training alpha is trained with an independent sgd optimizer
+        # We use "alpha" instead of lambda because code we are modeling off of
+        # uses "alpha" instead of lambda
         self._alpha = tf.get_variable("fisher_alpha", [], initializer=tf.zeros_initializer)
 
     def _optimize_alpha(self, disc_cost):
@@ -40,7 +41,7 @@ class FisherGAN():
         constraint would not hold.
         """
 
-        # first find alpha gradient
+        # Find gradient of alpha with respect to negative disc_cost
         self._alpha_optimizer = tf.train.GradientDescentOptimizer(self._rho)
         self.alpha_optimizer_op = self._alpha_optimizer.minimize(-disc_cost, var_list=[self._alpha])
         return
@@ -50,9 +51,7 @@ class FisherGAN():
         # Compared to WGAN, generator cost remains the same in fisher GAN
         gen_cost = -tf.reduce_mean(disc_fake)
 
-        # Calculate Fisher GAN disc cost
-        # NOTE that below two lines are the
-        # only ones that need change. 
+        # Calculate Lipchitz Constraint
         # E_P and E_Q refer to Expectation over real and fake.
 
         E_Q_f = tf.reduce_mean(disc_fake)
