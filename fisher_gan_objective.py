@@ -7,12 +7,19 @@ class FisherGAN():
     """Implements fisher gan objective functions 
     Modeled off https://github.com/ethancaballero/FisherGAN/blob/master/main.py
     Tried to keep variable names the same as much as possible
+
+
+    To measure convergence, gen_cost should start at zero and decrease
+    to a negative number. The lower, the better.
+
+    It is recommended that you use a critic iteration of 1 when using fisher gan
     """
 
     def __init__(self, rho=1e-5):
         tf.logging.warn("USING FISHER GAN OBJECTIVE FUNCTION")
         self._rho = rho
-        # Initialize alpha (or in paper lambda) with zero
+        # Initialize alpha (or in paper called lambda) with zero
+        # Throughout training alpha is trained with an independent sgd optimizer
         self._alpha = tf.get_variable("fisher_alpha", [], initializer=tf.zeros_initializer)
 
     def _optimize_alpha(self, disc_cost):
