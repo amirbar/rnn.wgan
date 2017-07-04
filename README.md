@@ -2,7 +2,7 @@
 
 Code for training and evaluation of the model from ["Language Generation with Recurrent Generative Adversarial Networks without Pre-training"](https://arxiv.org/abs/1706.01399).  
 
-
+Additional Code for using Fisher GAN in Recurrent Generative Adversarial Networks
  
 ### Sample outputs (32 chars)
 
@@ -23,6 +23,7 @@ Then use the following command:
 ```
 python curriculum_training.py
 ```
+
 
 The following packages are required:
 
@@ -56,6 +57,7 @@ START_SEQ: Sequence length to start the curriculum learning with (defaults to 1)
 END_SEQ: Sequence length to end the curriculum learning with (defaults to 32)
 SAVE_CHECKPOINTS_EVERY: Save checkpoint every # steps (defaults to 25000)
 LIMIT_BATCH: Boolean that indicates whether to limit the batch size  (defaults to true)
+GAN_TYPE: String Type of GAN to use. Choose between 'wgan' and 'fgan' for wasserstein and fisher respectively
 
 ```
 

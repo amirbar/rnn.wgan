@@ -26,11 +26,14 @@ class FisherGAN():
         """ In the optimization of alpha, we optimize via regular sgd with a learning rate
         of rho.
         This should occur every time the discriminator is optimized. 
+
+        Very crucial point --> We minimize the NEGATIVE disc_cost with our alpha parameter.
+        This is done to enforce the Lipchitz constraint.
         """
 
         # first find alpha gradient
         self._alpha_optimizer = tf.train.GradientDescentOptimizer(self._rho)
-        self.alpha_optimizer_op = self._alpha_optimizer.minimize(disc_cost, var_list=[self._alpha])
+        self.alpha_optimizer_op = self._alpha_optimizer.minimize(-disc_cost, var_list=[self._alpha])
         return
 
     def loss_d_g(self, disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length, Discriminator):
