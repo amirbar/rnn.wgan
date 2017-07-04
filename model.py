@@ -95,9 +95,7 @@ def get_train_op(cells, char_input, charmap_len, embedding, gt, n_samples, num_n
     gt_GRU_input = tf.matmul(gt_embedding, embedding)
     gt_GRU_input = tf.reshape(gt_GRU_input, [n_samples, seq_len, num_neurons])[:, :-1]
     gt_sentence_input = tf.concat([char_input, gt_GRU_input], axis=1)
-    GRU_output, _ = rnn_step_prediction(cells, charmap_len, gt_sentence_input, num_neurons, seq_len, sm_bias,
-                                         sm_weight,
-                                         states)
+    GRU_output, _ = rnn_step_prediction(cells, charmap_len, gt_sentence_input, num_neurons, seq_len, sm_bias, sm_weight, states)
     train_pred = []
     # TODO: optimize loop
     for i in range(seq_len):

@@ -33,7 +33,8 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
 
 
     merged, train_writer = define_summaries(disc_cost, gen_cost, seq_length)
-    disc_train_op, gen_train_op = get_optimization_ops(disc_cost, gen_cost, global_step)
+    disc_train_op, gen_train_op = get_optimization_ops(
+        disc_cost, gen_cost, global_step, FLAGS.DISC_LR, FLAGS.GEN_LR)
 
     saver = tf.train.Saver(tf.trainable_variables())
 

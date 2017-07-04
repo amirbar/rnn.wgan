@@ -3,15 +3,19 @@ from config import FLAGS, BATCH_SIZE, LAMBDA
 from model import get_generator, get_discriminator, params_with_name
 from fisher_gan_objective import FisherGAN
 
-def get_optimization_ops(disc_cost, gen_cost, global_step):
+def get_optimization_ops(disc_cost, gen_cost, global_step, gen_lr, disc_lr):
     gen_params = params_with_name('Generator')
     disc_params = params_with_name('Discriminator')
     print("Generator Params: %s" % gen_params)
     print("Disc Params: %s" % disc_params)
-    gen_train_op = tf.train.AdamOptimizer(learning_rate=1e-4, beta1=0.5, beta2=0.9).minimize(gen_cost,
+    gen_train_op = tf.train.AdamOptimizer(learning_rate=gen_lr, beta1=0.5, beta2=0.9).minimize(gen_cost,
         var_list=gen_params,
         global_step=global_step)
-    disc_train_op = tf.train.AdamOptimizer(learning_rate=1e-4, beta1=0.5, beta2=0.9).minimize(disc_cost,
+
+    # Due to TTUR paper, the learning rate of the disc should be different than generator
+    # https://arxiv.org/abs/1706.08500
+    # Therefore, we double disc learning rate
+    disc_train_op = tf.train.AdamOptimizer(learning_rate=disc_lr, beta1=0.5, beta2=0.9).minimize(disc_cost,
         var_list=disc_params)
     return disc_train_op, gen_train_op
 

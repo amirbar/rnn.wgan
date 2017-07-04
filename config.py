@@ -47,6 +47,10 @@ flags.DEFINE_integer('PRINT_ITERATION', 100, '')
 flags.DEFINE_string('GAN_TYPE', 'wgan', "Type of GAN to use. Choose between 'wgan' and 'fgan' for wasserstein and fisher respectively")
 flags.DEFINE_float('FISHER_GAN_RHO', 1e-6, "Weight on the penalty term for (sigmas -1)**2")
 
+# Learning Rates
+flags.DEFINE_float('DISC_LR', 2e-4, """Disc learning rate -- should be different than generator
+    learning rate due to TTUR paper https://arxiv.org/abs/1706.08500""")
+flags.DEFINE_float('GEN_LR', 1e-4, """Gen learning rate""")
 
 
 
