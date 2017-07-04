@@ -12,6 +12,11 @@ class FisherGAN():
     To measure convergence, gen_cost should start at zero and decrease
     to a negative number. The lower, the better.
 
+    Warning: in the very beginning of training, you may see the gen_cost rise. Please
+    wait at least 5000 iterations and the gen_cost should start to lower. This 
+    phenomena is due to the critic finding the appropriate wasserstein distance
+    and then the generator adjusting for it.
+
     It is recommended that you use a critic iteration of 1 when using fisher gan
     """
 
@@ -25,10 +30,14 @@ class FisherGAN():
     def _optimize_alpha(self, disc_cost):
         """ In the optimization of alpha, we optimize via regular sgd with a learning rate
         of rho.
-        This should occur every time the discriminator is optimized. 
+
+        This optimization should occur every time the discriminator is optimized because
+        the same batch is used.
 
         Very crucial point --> We minimize the NEGATIVE disc_cost with our alpha parameter.
-        This is done to enforce the Lipchitz constraint.
+        This is done to enforce the Lipchitz constraint. If we minimized the positive disc_cost
+        then our discriminator loss would drop to a very low negative number and the Lipchitz
+        constraint would not hold.
         """
 
         # first find alpha gradient

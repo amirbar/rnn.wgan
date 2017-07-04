@@ -24,6 +24,12 @@ Then use the following command:
 python curriculum_training.py
 ```
 
+To train with fgan:
+
+```
+python curriculum_training.py --GAN_TYPE wgan --CRITIC_ITERS 2 --GEN_ITERS 4
+```
+
 
 The following packages are required:
 
@@ -61,11 +67,24 @@ GAN_TYPE: String Type of GAN to use. Choose between 'wgan' and 'fgan' for wasser
 
 ```
 
-Paramters can be set by either changing their value in the config file or by passing them in the terminal:
+Parameters can be set by either changing their value in the config file or by passing them in the terminal:
 
 ```
 python curriculum_training.py --START_SEQ=1 --END_SEQ=32
 ```
+
+## Monitoring Convergence During Training
+
+### Wasserstein GAN
+In the wasserstein GAN, please monitor the disc_cost. It should be a negative number and approach zero. The disc_cost represents the negative wasserstein distance between gen and critic.
+
+### Fisher GAN
+To measure convergence, gen_cost should start at zero and decrease to a negative number. The lower, the better.
+
+Warning: in the very beginning of training, you may see the gen_cost rise. Please wait at least 5000 iterations and the gen_cost should start to lower. This phenomena is due to the critic finding the appropriate wasserstein distance and then the generator adjusting for it.
+
+It is recommended that you use a critic iteration of 1 when using fisher gan.
+
 
 ## Generating text
 

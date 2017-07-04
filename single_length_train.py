@@ -61,18 +61,22 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
             for i in range(CRITIC_ITERS):
                 _data = next(gen)
 
-                if FLAGS.GAN_TYPE == "fgan":
+                if FLAGS.GAN_TYPE.lower() == "fgan":
                     _disc_cost, _, real_scores, _ = session.run(
                     [disc_cost, disc_train_op, disc_real,
                         other_ops["alpha_optimizer_op"]],
                     feed_dict={real_inputs_discrete: _data}
                     )
 
-                else:
+                elif FLAGS.GAN_TYPE.lower() == "wgan":
                     _disc_cost, _, real_scores = session.run(
                     [disc_cost, disc_train_op, disc_real],
                     feed_dict={real_inputs_discrete: _data}
                     )
+                    
+                else:
+                    raise ValueError(
+                        "Appropriate gan type not selected: {}".format(FLAGS.GAN_TYPE))
                 _disc_cost_list.append(_disc_cost)
 
 
