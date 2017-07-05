@@ -5,6 +5,8 @@ import tensorflow as tf
 from tensorflow.contrib.rnn import GRUCell
 from highway_rnn_cell import RHNCell
 
+tf.logging.set_verbosity(tf.logging.INFO)
+
 flags = tf.app.flags
 
 

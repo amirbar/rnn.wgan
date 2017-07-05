@@ -24,11 +24,11 @@ Then use the following command:
 python curriculum_training.py
 ```
 
-To train with fgan:
+To train with fgan with recurrent highway cell:
 
 ```
-python curriculum_training.py --GAN_TYPE fgan \
---CRITIC_ITERS 2 --GEN_ITERS 4 --ITERATIONS_PER_SEQ_LENGTH 60000
+python curriculum_training.py --GAN_TYPE fgan --CRITIC_ITERS 2 --GEN_ITERS 4 \
+--PRINT_ITERATION 500 --ITERATIONS_PER_SEQ_LENGTH 60000 --RNN_CELL rhn
 ```
 
 Please note that for fgan, there may be completely different hyperparameters that are more suitable for better convergence.
