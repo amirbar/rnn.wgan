@@ -27,10 +27,11 @@ python curriculum_training.py
 To train with fgan:
 
 ```
-python curriculum_training.py --GAN_TYPE wgan \
+python curriculum_training.py --GAN_TYPE fgan \
 --CRITIC_ITERS 2 --GEN_ITERS 4 --ITERATIONS_PER_SEQ_LENGTH 60000
 ```
 
+Please note that for fgan, there may be completely different hyperparameters that are more suitable for better convergence.
 
 The following packages are required:
 

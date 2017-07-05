@@ -37,19 +37,23 @@ def get_substrings_from_gt(real_inputs, seq_length, charmap_len):
         return all_sub_strings
 
 
-def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan"):
+def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan", rnn_cell=None):
     assert gan_type in ["wgan", "fgan", "cgan"]
+    assert rnn_cell
     other_ops = {}
     real_inputs = tf.one_hot(real_inputs_discrete, len(charmap))
     Generator = get_generator(FLAGS.GENERATOR_MODEL)
     Discriminator = get_discriminator(FLAGS.DISCRIMINATOR_MODEL)
-    train_pred, inference_op = Generator(BATCH_SIZE, len(charmap), seq_len=seq_length, gt=real_inputs)
+    train_pred, inference_op = Generator(BATCH_SIZE, len(charmap), seq_len=seq_length, gt=real_inputs, rnn_cell=rnn_cell)
 
     real_inputs_substrings = get_substrings_from_gt(real_inputs, seq_length, len(charmap))
 
-    disc_real = Discriminator(real_inputs_substrings, len(charmap), seq_length, reuse=False)
-    disc_fake = Discriminator(train_pred, len(charmap), seq_length, reuse=True)
-    disc_on_inference = Discriminator(inference_op, len(charmap), seq_length, reuse=True)
+    disc_real = Discriminator(real_inputs_substrings, len(charmap), seq_length, reuse=False,
+        rnn_cell=rnn_cell)
+    disc_fake = Discriminator(train_pred, len(charmap), seq_length, reuse=True,
+        rnn_cell=rnn_cell)
+    disc_on_inference = Discriminator(inference_op, len(charmap), seq_length, reuse=True,
+        rnn_cell=rnn_cell)
 
 
     if gan_type == "wgan":

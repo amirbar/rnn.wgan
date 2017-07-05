@@ -1,7 +1,4 @@
 import tensorflow as tf
-from config import FLAGS, BATCH_SIZE, LAMBDA
-from model import get_generator, get_discriminator
-
 
 class FisherGAN():
     """Implements fisher gan objective functions 

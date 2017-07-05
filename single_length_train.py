@@ -22,14 +22,13 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
     if len(DATA_DIR) == 0:
         raise Exception('Please specify path to data directory in single_length_train.py!')
 
-    lines, _, _ = model_and_data_serialization.load_dataset(seq_length=seq_length, b_charmap=False, b_inv_charmap=False,
-                                                            n_examples=FLAGS.MAX_N_EXAMPLES)
+    lines, _, _ = model_and_data_serialization.load_dataset(seq_length=seq_length, b_charmap=False, b_inv_charmap=False, n_examples=FLAGS.MAX_N_EXAMPLES)
 
     real_inputs_discrete = tf.placeholder(tf.int32, shape=[BATCH_SIZE, seq_length])
 
     global_step = tf.Variable(0, trainable=False)
     disc_cost, gen_cost, fake_inputs, disc_fake, disc_real, disc_on_inference, inference_op, other_ops = define_objective(charmap,real_inputs_discrete, seq_length,
-        gan_type=FLAGS.GAN_TYPE)
+        gan_type=FLAGS.GAN_TYPE, rnn_cell=RNN_CELL)
 
 
     merged, train_writer = define_summaries(disc_cost, gen_cost, seq_length)
@@ -38,14 +37,19 @@ def run(iterations, seq_length, is_first, charmap, inv_charmap, prev_seq_length)
 
     saver = tf.train.Saver(tf.trainable_variables())
 
-    with tf.Session() as session:
+    # Use JIT XLA compilation to speed up calculations
+    config=tf.ConfigProto(
+        log_device_placement=False, allow_soft_placement=True)
+    config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
+
+    with tf.Session(config=config) as session:
 
         session.run(tf.initialize_all_variables())
         if not is_first:
             print("Loading previous checkpoint...")
             internal_checkpoint_dir = model_and_data_serialization.get_internal_checkpoint_dir(prev_seq_length)
             model_and_data_serialization.optimistic_restore(session,
-                                                            latest_checkpoint(internal_checkpoint_dir, "checkpoint"))
+                latest_checkpoint(internal_checkpoint_dir, "checkpoint"))
 
             restore_config.set_restore_dir(
                 load_from_curr_session=True)  # global param, always load from curr session after finishing the first seq

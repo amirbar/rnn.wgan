@@ -2,6 +2,8 @@ import os
 import time
 
 import tensorflow as tf
+from tensorflow.contrib.rnn import GRUCell
+from highway_rnn_cell import RHNCell
 
 flags = tf.app.flags
 
@@ -16,18 +18,27 @@ flags.DEFINE_integer('CRITIC_ITERS', 10, """When training wgan, it is helpful to
     10 critic_iters, however, when training with fgan, 2 critic iters may be more suitable.""")
 flags.DEFINE_integer('LAMBDA', 10, '')
 flags.DEFINE_integer('MAX_N_EXAMPLES', 10000000, '')
-flags.DEFINE_string('GENERATOR_MODEL', 'Generator_GRU_CL_VL_TH', '')
-flags.DEFINE_string('DISCRIMINATOR_MODEL', 'Discriminator_GRU', '')
+flags.DEFINE_string('GENERATOR_MODEL', 'Generator_RNN_CL_VL_TH', '')
+flags.DEFINE_string('DISCRIMINATOR_MODEL', 'Discriminator_RNN', '')
 flags.DEFINE_string('PICKLE_PATH', './pkl', '')
 flags.DEFINE_integer('GEN_ITERS', 50, """When training wgan, it is helpful to use 
     50 gen_iters, however, when training with fgan, 2 gen_iters may be more suitable.""")
 flags.DEFINE_integer('ITERATIONS_PER_SEQ_LENGTH', 15000, '')
 flags.DEFINE_float('NOISE_STDEV', 10.0, '')
+
+flags.DEFINE_boolean('TRAIN_FROM_CKPT', False, '')
+
+# RNN Settings
+flags.DEFINE_integer('GEN_RNN_LAYERS', 1, '')
+flags.DEFINE_integer('DISC_RNN_LAYERS', 1, '')
 flags.DEFINE_integer('DISC_STATE_SIZE', 512, '')
 flags.DEFINE_integer('GEN_STATE_SIZE', 512, '')
-flags.DEFINE_boolean('TRAIN_FROM_CKPT', False, '')
-flags.DEFINE_integer('GEN_GRU_LAYERS', 1, '')
-flags.DEFINE_integer('DISC_GRU_LAYERS', 1, '')
+flags.DEFINE_string('RNN_CELL', 'gru', """Choose between 'gru' or 'rhn'.
+    'gru' option refers to a vanilla gru implementation
+    'rhn' options refers to a multiplicative integration 2-layer highway rnn
+        with normalizing tanh activation
+    """)
+
 flags.DEFINE_integer('START_SEQ', 1, '')
 flags.DEFINE_integer('END_SEQ', 32, '')
 flags.DEFINE_bool('PADDING_IS_SUFFIX', False, '')
@@ -103,3 +114,10 @@ CKPT_PATH = FLAGS.CKPT_PATH
 GENERATOR_MODEL = FLAGS.GENERATOR_MODEL
 DISCRIMINATOR_MODEL = FLAGS.DISCRIMINATOR_MODEL
 GEN_ITERS = FLAGS.GEN_ITERS
+
+if FLAGS.RNN_CELL.lower() == 'gru':
+    RNN_CELL = GRUCell
+elif FLAGS.RNN_CELL.lower() == 'rhn':
+    RNN_CELL = RHNCell
+else:
+    raise ValueError('improper rnn cell type selected')
