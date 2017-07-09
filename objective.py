@@ -57,7 +57,7 @@ def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan",
 
 
     if gan_type == "wgan":
-        disc_cost, gen_cost = loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
+        disc_cost, gen_cost = loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator, rnn_cell)
     elif gan_type == "fgan":
         fgan = FisherGAN()
         disc_cost, gen_cost = fgan.loss_d_g(disc_fake, disc_real, train_pred, real_inputs_substrings, charmap, seq_length, Discriminator)
@@ -68,7 +68,7 @@ def define_objective(charmap, real_inputs_discrete, seq_length, gan_type="wgan",
     return disc_cost, gen_cost, train_pred, disc_fake, disc_real, disc_on_inference, inference_op, other_ops
 
 
-def loss_d_g(disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length, Discriminator):
+def loss_d_g(disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length, Discriminator, rnn_cell):
     disc_cost = tf.reduce_mean(disc_fake) - tf.reduce_mean(disc_real)
     gen_cost = -tf.reduce_mean(disc_fake)
 
@@ -80,7 +80,7 @@ def loss_d_g(disc_fake, disc_real, fake_inputs, real_inputs, charmap, seq_length
     )
     differences = fake_inputs - real_inputs
     interpolates = real_inputs + (alpha * differences)
-    gradients = tf.gradients(Discriminator(interpolates, len(charmap), seq_length, reuse=True), [interpolates])[0]
+    gradients = tf.gradients(Discriminator(interpolates, len(charmap), seq_length, reuse=True, rnn_cell=rnn_cell), [interpolates])[0]
     slopes = tf.sqrt(tf.reduce_sum(tf.square(gradients), reduction_indices=[1, 2]))
     gradient_penalty = tf.reduce_mean((slopes - 1.) ** 2)
     disc_cost += LAMBDA * gradient_penalty
