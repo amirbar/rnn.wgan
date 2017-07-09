@@ -2,6 +2,10 @@ import os
 import time
 
 import tensorflow as tf
+from tensorflow.contrib.rnn import GRUCell
+from highway_rnn_cell import RHNCell
+
+tf.logging.set_verbosity(tf.logging.INFO)
 
 flags = tf.app.flags
 
@@ -12,20 +16,31 @@ flags.DEFINE_string('LOGS_DIR', './logs/', '')
 flags.DEFINE_string('DATA_DIR', './data/1-billion-word-language-modeling-benchmark-r13output/', "")
 flags.DEFINE_string('CKPT_PATH', "./ckpt/", "")
 flags.DEFINE_integer('BATCH_SIZE', 64, '')
-flags.DEFINE_integer('CRITIC_ITERS', 10, '')
+flags.DEFINE_integer('CRITIC_ITERS', 10, """When training wgan, it is helpful to use 
+    10 critic_iters, however, when training with fgan, 2 critic iters may be more suitable.""")
 flags.DEFINE_integer('LAMBDA', 10, '')
 flags.DEFINE_integer('MAX_N_EXAMPLES', 10000000, '')
-flags.DEFINE_string('GENERATOR_MODEL', 'Generator_GRU_CL_VL_TH', '')
-flags.DEFINE_string('DISCRIMINATOR_MODEL', 'Discriminator_GRU', '')
+flags.DEFINE_string('GENERATOR_MODEL', 'Generator_RNN_CL_VL_TH', '')
+flags.DEFINE_string('DISCRIMINATOR_MODEL', 'Discriminator_RNN', '')
 flags.DEFINE_string('PICKLE_PATH', './pkl', '')
-flags.DEFINE_integer('GEN_ITERS', 50, '')
+flags.DEFINE_integer('GEN_ITERS', 50, """When training wgan, it is helpful to use 
+    50 gen_iters, however, when training with fgan, 2 gen_iters may be more suitable.""")
 flags.DEFINE_integer('ITERATIONS_PER_SEQ_LENGTH', 15000, '')
 flags.DEFINE_float('NOISE_STDEV', 10.0, '')
+
+flags.DEFINE_boolean('TRAIN_FROM_CKPT', False, '')
+
+# RNN Settings
+flags.DEFINE_integer('GEN_RNN_LAYERS', 1, '')
+flags.DEFINE_integer('DISC_RNN_LAYERS', 1, '')
 flags.DEFINE_integer('DISC_STATE_SIZE', 512, '')
 flags.DEFINE_integer('GEN_STATE_SIZE', 512, '')
-flags.DEFINE_boolean('TRAIN_FROM_CKPT', False, '')
-flags.DEFINE_integer('GEN_GRU_LAYERS', 1, '')
-flags.DEFINE_integer('DISC_GRU_LAYERS', 1, '')
+flags.DEFINE_string('RNN_CELL', 'gru', """Choose between 'gru' or 'rhn'.
+    'gru' option refers to a vanilla gru implementation
+    'rhn' options refers to a multiplicative integration 2-layer highway rnn
+        with normalizing tanh activation
+    """)
+
 flags.DEFINE_integer('START_SEQ', 1, '')
 flags.DEFINE_integer('END_SEQ', 32, '')
 flags.DEFINE_bool('PADDING_IS_SUFFIX', False, '')
@@ -35,6 +50,22 @@ flags.DEFINE_boolean('SCHEDULE_ITERATIONS', False, '')
 flags.DEFINE_integer('SCHEDULE_MULT', 2000, '')
 flags.DEFINE_boolean('DYNAMIC_BATCH', False, '')
 flags.DEFINE_string('SCHEDULE_SPEC', 'all', '')
+
+# Print Options
+flags.DEFINE_boolean('PRINT_EVERY_STEP', False, '')
+flags.DEFINE_integer('PRINT_ITERATION', 100, '')
+
+
+# Fisher GAN Flags
+flags.DEFINE_string('GAN_TYPE', 'wgan', "Type of GAN to use. Choose between 'wgan' and 'fgan' for wasserstein and fisher respectively")
+flags.DEFINE_float('FISHER_GAN_RHO', 1e-6, "Weight on the penalty term for (sigmas -1)**2")
+
+# Learning Rates
+flags.DEFINE_float('DISC_LR', 2e-4, """Disc learning rate -- should be different than generator
+    learning rate due to TTUR paper https://arxiv.org/abs/1706.08500""")
+flags.DEFINE_float('GEN_LR', 1e-4, """Gen learning rate""")
+
+
 
 # Only for inference mode
 
@@ -85,3 +116,10 @@ CKPT_PATH = FLAGS.CKPT_PATH
 GENERATOR_MODEL = FLAGS.GENERATOR_MODEL
 DISCRIMINATOR_MODEL = FLAGS.DISCRIMINATOR_MODEL
 GEN_ITERS = FLAGS.GEN_ITERS
+
+if FLAGS.RNN_CELL.lower() == 'gru':
+    RNN_CELL = GRUCell
+elif FLAGS.RNN_CELL.lower() == 'rhn':
+    RNN_CELL = RHNCell
+else:
+    raise ValueError('improper rnn cell type selected')
