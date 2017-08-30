@@ -109,11 +109,11 @@ Warning: in the very beginning of training, you may see the gen_cost rise. Pleas
 If you found this code useful, please cite the following paper:
 
 ```
-@article{press2017language,
-  title={Language Generation with Recurrent Generative Adversarial Networks without Pre-training},
-  author={Press, Ofir and Bar, Amir and Bogin, Ben and Berant, Jonathan and Wolf, Lior},
-  journal={arXiv preprint arXiv:1706.01399},
-  year={2017}
+@inproceedings{press2017language,
+  author = {O. Press and A. Bar and B. Bogin and J. Berant and L. Wolf},
+  booktitle = {Fist Workshop on Learning to Generate Natural Language@ICML},
+  title = {Language Generation with Recurrent Generative Adversarial Networks without Pre-training},
+  year = {2017},
 }
 ```
 
