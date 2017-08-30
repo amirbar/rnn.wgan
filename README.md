@@ -105,6 +105,17 @@ To measure fgan convergence, gen_cost should start at a positive number and decr
 
 Warning: in the very beginning of training, you may see the gen_cost rise. Please wait at least 5000 iterations and the gen_cost should start to lower. This phenomena is due to the critic finding the appropriate wasserstein distance and then the generator adjusting for it.
 
+### If you find this work useful in your work, feel free to cite us
+```
+@article{press2017language,
+  title={Language Generation with Recurrent Generative Adversarial Networks without Pre-training},
+  author={Press, Ofir and Bar, Amir and Bogin, Ben and Berant, Jonathan and Wolf, Lior},
+  journal={arXiv preprint arXiv:1706.01399},
+  year={2017}
+}
+```
+
+
 ## Acknowledgments
 
 This repository is based on the code published in [Improved Training of Wasserstein GANs](https://github.com/igul222/improved_wgan_training).
