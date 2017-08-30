@@ -111,7 +111,7 @@ If you found this code useful, please cite the following paper:
 ```
 @inproceedings{press2017language,
   author = {O. Press and A. Bar and B. Bogin and J. Berant and L. Wolf},
-  booktitle = {Fist Workshop on Learning to Generate Natural Language@ICML},
+  booktitle = {First Workshop on Learning to Generate Natural Language@ICML},
   title = {Language Generation with Recurrent Generative Adversarial Networks without Pre-training},
   year = {2017},
 }
