@@ -70,8 +70,10 @@ python curriculum_training.py --START_SEQ=1 --END_SEQ=32
 The `generate.py` script will generate `BATCH_SIZE` samples using a saved model. It should be run using the parameters used to train the model (if they are different than the default values). For example:
 
 ``` 
-python generate.py --CKPT_PATH=/path/to/checkpoint --DISC_GRU_LAYERS=2 --GEN_GRU_LAYERS=2
+python generate.py --CKPT_PATH=/path/to/checkpoint/seq-32/ckp --DISC_GRU_LAYERS=2 --GEN_GRU_LAYERS=2
 ```
+
+(If your model has not reached stage 32 in the curriculum, make sure to change the '32' in the path above to the maximal stage in the curriculum that your model trained on.)
 
 ## Evaluating text
 
