@@ -6,7 +6,7 @@ output_path = './output/sample.txt'
 
 '''
 example usage:
-python generate.py --GENERATOR_MODEL=Generator_GRU_CL_VL_TH --DISCRIMINATOR_MODEL=Discriminator_GRU --CKPT_PATH=path/to/checkpoint
+python generate.py --CKPT_PATH=/path/to/checkpoint/seq-32/ckp --DISC_GRU_LAYERS=2 --GEN_GRU_LAYERS=2
 '''
 
 SEQ_LEN = FLAGS.END_SEQ
