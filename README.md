@@ -2,7 +2,7 @@
 
 Code for training and evaluation of the model from ["Language Generation with Recurrent Generative Adversarial Networks without Pre-training"](https://arxiv.org/abs/1706.01399).  
 
-Additional Code for using Fisher GAN in Recurrent Generative Adversarial Networks
+
  
 ### Sample outputs (32 chars)
 
@@ -56,7 +56,6 @@ START_SEQ: Sequence length to start the curriculum learning with (defaults to 1)
 END_SEQ: Sequence length to end the curriculum learning with (defaults to 32)
 SAVE_CHECKPOINTS_EVERY: Save checkpoint every # steps (defaults to 25000)
 LIMIT_BATCH: Boolean that indicates whether to limit the batch size  (defaults to true)
-GAN_TYPE: String Type of GAN to use. Choose between 'wgan' and 'fgan' for wasserstein and fisher respectively
 
 ```
 
@@ -65,10 +64,6 @@ Parameters can be set by either changing their value in the config file or by pa
 ```
 python curriculum_training.py --START_SEQ=1 --END_SEQ=32
 ```
-
-## Monitoring Convergence During Training
-
-In the wasserstein GAN, please monitor the disc_cost. It should be a negative number and approach zero. The disc_cost represents the negative wasserstein distance between gen and critic.
 
 ## Generating text
 
@@ -87,24 +82,6 @@ python evaluate.py --INPUT_SAMPLE=/path/to/samples.txt
 ```
 
 
-
-## Experimental Features (not mentioned in the paper)
-
-To train with fgan with recurrent highway cell:
-
-```
-python curriculum_training.py --GAN_TYPE fgan --CRITIC_ITERS 2 --GEN_ITERS 4 \
---PRINT_ITERATION 500 --ITERATIONS_PER_SEQ_LENGTH 60000 --RNN_CELL rhn
-```
-
-Please note that for fgan, there may be completely different hyperparameters that are more suitable for better convergence.
-
-### Monitoring Convergence
-
-To measure fgan convergence, gen_cost should start at a positive number and decrease. The lower, the better.
-
-Warning: in the very beginning of training, you may see the gen_cost rise. Please wait at least 5000 iterations and the gen_cost should start to lower. This phenomena is due to the critic finding the appropriate wasserstein distance and then the generator adjusting for it.
-
 ## Reference
 If you found this code useful, please cite the following paper:
 
@@ -117,8 +94,6 @@ If you found this code useful, please cite the following paper:
 }
 ```
 
-
 ## Acknowledgments
 
 This repository is based on the code published in [Improved Training of Wasserstein GANs](https://github.com/igul222/improved_wgan_training).
-
