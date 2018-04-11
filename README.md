@@ -2,6 +2,7 @@
 
 Code for training and evaluation of the model from ["Language Generation with Recurrent Generative Adversarial Networks without Pre-training"](https://arxiv.org/abs/1706.01399).  
 
+A short summary of the paper is available [here](http://www.shortscience.org/paper?bibtexKey=journals/corr/PressBBBW17#ofirpress). 
 
  
 ### Sample outputs (32 chars)
